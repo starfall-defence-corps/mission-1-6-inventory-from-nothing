@@ -1,0 +1,38 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV container=docker
+
+# systemd + SSH (optional operator login on 2221) + the recon toolchain.
+# ansible is installed from apt (not pip): the distro's python3-cryptography is
+# built for this arch and avoids the SIGILL some aarch64 pip wheels hit inside
+# the Docker Desktop VM. apt's `ansible` bundles the community.general
+# collection, which provides the nmap inventory plugin used in the capstone.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    systemd systemd-sysv openssh-server \
+    python3 python3-apt sudo iproute2 procps iputils-ping \
+    nmap ansible openssh-client ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN systemctl mask \
+    dev-hugepages.mount sys-fs-fuse-connections.mount \
+    systemd-udev-trigger.service systemd-udevd.service \
+    systemd-update-utmp.service systemd-logind.service \
+    getty@.service getty.target
+
+RUN systemctl enable ssh
+RUN mkdir -p /run/sshd
+
+# cadet operator: passwordless sudo, key-based SSH (for optional 2221 login)
+RUN useradd -m -s /bin/bash cadet \
+    && echo 'cadet ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/cadet \
+    && chmod 0440 /etc/sudoers.d/cadet \
+    && mkdir -p /home/cadet/.ssh && chmod 700 /home/cadet/.ssh \
+    && chown -R cadet:cadet /home/cadet/.ssh
+
+# Land in the bind-mounted workspace on interactive login.
+RUN echo 'cd ~/workspace 2>/dev/null || true' >> /home/cadet/.bashrc
+
+EXPOSE 22
+STOPSIGNAL SIGRTMIN+3
+CMD ["/sbin/init"]
