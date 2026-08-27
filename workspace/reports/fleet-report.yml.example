@@ -1,0 +1,28 @@
+# Fleet report (Phase 4)
+# Copy this to fleet-report.yml and fill one entry per MANAGED node.
+# Every value must come from a LIVE facts sweep, e.g.:
+#   ansible web_servers:db_servers:comms_relays -m setup
+# The 'nonce' is a local fact (ansible_local.sdc.nonce) planted on each node —
+# it proves you actually contacted the live host. A copied value will not match.
+fleet:
+  - ip: 172.30.0.REPLACE
+    hostname: REPLACE            # ansible_hostname
+    role: web_servers
+    os: Ubuntu                   # ansible_distribution
+    os_version: "22.04"          # ansible_distribution_version
+    memtotal_mb: 0               # ansible_memtotal_mb
+    nonce: REPLACE               # ansible_local.sdc.nonce
+  - ip: 172.30.0.REPLACE
+    hostname: REPLACE
+    role: db_servers
+    os: Ubuntu
+    os_version: "22.04"
+    memtotal_mb: 0
+    nonce: REPLACE
+  - ip: 172.30.0.REPLACE
+    hostname: REPLACE
+    role: comms_relays
+    os: Ubuntu
+    os_version: "22.04"
+    memtotal_mb: 0
+    nonce: REPLACE

@@ -1,0 +1,104 @@
+# =============================================================================
+# Mission 1.6 — Inventory from Nothing
+#
+# The cadet is given ONLY the subnet 172.30.0.0/24. The managed nodes and the
+# decoy publish NO host ports, so the only way to reach them is from inside the
+# subnet — i.e. from the sdc-ops recon node. Their IPs and opaque hostnames are
+# injected from the gitignored .docker/.env (written by setup-lab.sh), so the
+# answer never lives in the repo.
+# =============================================================================
+services:
+  # -- Recon / control node: the cadet's operating position --------------------
+  sdc-ops:
+    build:
+      context: .
+      dockerfile: Dockerfile.ops
+    container_name: sdc-ops
+    hostname: sdc-ops
+    privileged: true
+    cgroup: host
+    tmpfs:
+      - /run
+      - /run/lock
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - ../workspace:/home/cadet/workspace
+    networks:
+      fleet_net:
+        ipv4_address: 172.30.0.10
+    ports:
+      - "2221:22"
+
+  # -- Managed targets (discover-only; no host ports) --------------------------
+  sdc-node-a:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: sdc-node-a
+    hostname: ${SDC_A_HOST:-sdc-a}
+    privileged: true
+    cgroup: host
+    tmpfs: [/run, /run/lock, /tmp]
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - ./ssh-keys/authorized_keys:/home/cadet/.ssh/authorized_keys:ro
+    networks:
+      fleet_net:
+        ipv4_address: ${SDC_A_IP:-172.30.0.31}
+
+  sdc-node-b:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: sdc-node-b
+    hostname: ${SDC_B_HOST:-sdc-b}
+    privileged: true
+    cgroup: host
+    tmpfs: [/run, /run/lock, /tmp]
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - ./ssh-keys/authorized_keys:/home/cadet/.ssh/authorized_keys:ro
+    networks:
+      fleet_net:
+        ipv4_address: ${SDC_B_IP:-172.30.0.32}
+
+  sdc-node-c:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: sdc-node-c
+    hostname: ${SDC_C_HOST:-sdc-c}
+    privileged: true
+    cgroup: host
+    tmpfs: [/run, /run/lock, /tmp]
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - ./ssh-keys/authorized_keys:/home/cadet/.ssh/authorized_keys:ro
+    networks:
+      fleet_net:
+        ipv4_address: ${SDC_C_IP:-172.30.0.33}
+
+  # -- Decoy: a live host that is NOT part of the fleet (no SSH) ----------------
+  sdc-decoy:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: sdc-decoy
+    hostname: ${SDC_D_HOST:-sdc-d}
+    privileged: true
+    cgroup: host
+    tmpfs: [/run, /run/lock, /tmp]
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    networks:
+      fleet_net:
+        ipv4_address: ${SDC_D_IP:-172.30.0.34}
+
+networks:
+  fleet_net:
+    name: fleet_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

@@ -1,0 +1,23 @@
+# Service fingerprint map (Phase 2)
+# Copy this to services.yml and fill it in from your nmap service scan:
+#   nmap -sV -p 22,80,5432,6379,8080 <ip>
+#
+# Infer each managed node's role from its open service port:
+#   80   -> web_servers
+#   5432 -> db_servers
+#   6379 -> comms_relays
+# A host with NO SSH (22) that only serves 8080 is a DECOY — not fleet.
+# Mark it role: unmanaged (or leave it out entirely).
+hosts:
+  172.30.0.REPLACE:
+    ports: [22, 80]
+    role: web_servers
+  172.30.0.REPLACE:
+    ports: [22, 5432]
+    role: db_servers
+  172.30.0.REPLACE:
+    ports: [22, 6379]
+    role: comms_relays
+  172.30.0.REPLACE:
+    ports: [8080]
+    role: unmanaged      # decoy — no SSH
