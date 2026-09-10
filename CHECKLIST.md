@@ -64,3 +64,5 @@ Check each item off as you complete it. If a phase is blocked, see
 
 - [ ] `make test` — all ARIA checks pass
 - [ ] `make submit` — branch, commit, push, open PR
+
+**Next stop**: [Gateway Simulation — Operation: First Contact](https://github.com/starfall-defence-corps/gateway-simulation)
