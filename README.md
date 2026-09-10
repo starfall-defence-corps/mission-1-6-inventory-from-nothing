@@ -117,7 +117,7 @@ Without a key, PR review is skipped and `make test` still works locally.
 
 ## Troubleshooting
 
-**Containers won't start**: Ensure Docker Desktop is running; check for port conflicts on 2221-2223 (only one SDC lab can run at a time — `make destroy` in any other mission first).
+**Containers won't start**: Ensure Docker Desktop is running; check for port conflicts on 2221 (the only port this lab publishes). Only one SDC lab at a time is supported — run `make destroy` in any other mission first.
 
 **Can't see any hosts on the subnet**: Make sure you are running `nmap` **from inside `sdc-ops`** (`make shell`), not from your host machine. The fleet publishes no ports to your host — it is only reachable from inside the range network.
 
