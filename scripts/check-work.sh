@@ -30,7 +30,7 @@ if [ $EXIT_CODE -eq 0 ]; then
     echo -e ""
     echo -e "  From one line — a subnet — you mapped the whole"
     echo -e "  fleet, and your inventory survives Nyx's rotation."
-    echo -e "  That is day-zero cartography. Well done, Cadet."
+    echo -e "  That is day-zero cartography. Well done, Sub-Lieutenant."
     echo -e "  ==============================================${RESET}"
 else
     echo -e "  ${RED}${BOLD}=============================================="
