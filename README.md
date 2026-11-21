@@ -95,6 +95,8 @@ make reset      Tear down and rebuild the range (re-randomises addressing)
 make destroy    Tear down everything (containers, keys, range state, venv)
 ```
 
+> **Note:** `make submit` uses the [GitHub CLI](https://cli.github.com/) — install `gh` and run `gh auth login` once before your first submission.
+
 ## Mission Files
 
 | File | Purpose |
